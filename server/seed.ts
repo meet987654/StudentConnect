@@ -1,166 +1,230 @@
-import { storage } from "./storage";
+import { db } from "./db";
+import { events, onboardingSteps, achievements, learningResources } from "@shared/schema";
 
-export async function seedDatabase() {
-  console.log("Starting database seeding...");
-
+async function seed() {
   try {
+    console.log("🌱 Starting database seed...");
+
+    // Clear existing data
+    await db.delete(learningResources);
+    await db.delete(achievements);
+    await db.delete(onboardingSteps);
+    await db.delete(events);
+
     // Seed onboarding steps
-    const onboardingSteps = [
+    const onboardingData = [
       {
-        name: "create_profile",
-        title: "Create Profile",
-        description: "Set up your student profile and connect your university email",
-        points: 50,
+        name: "profile_setup",
+        title: "Complete Your Profile",
+        description: "Add your university, course, and skills to help us personalize your experience",
+        points: 100,
         order: 1,
-        isRequired: true
+        isRequired: true,
       },
       {
-        name: "join_community",
-        title: "Join Community", 
-        description: "Connect with Telegram and follow @SuperteamIE on Twitter",
+        name: "join_telegram",
+        title: "Join Telegram Community",
+        description: "Connect with other Irish students and stay updated on events",
         points: 50,
         order: 2,
-        isRequired: true
+        isRequired: true,
+      },
+      {
+        name: "follow_twitter",
+        title: "Follow @SuperteamIE",
+        description: "Stay updated with our latest announcements and opportunities",
+        points: 50,
+        order: 3,
+        isRequired: true,
       },
       {
         name: "first_event",
-        title: "Attend Event",
-        description: "Join your first Superteam Ireland meetup or workshop",
-        points: 100,
-        order: 3,
-        isRequired: true
-      }
+        title: "Attend Your First Event",
+        description: "RSVP and attend any Superteam Ireland event",
+        points: 200,
+        order: 4,
+        isRequired: false,
+      },
     ];
 
-    // Check if steps already exist
-    const existingSteps = await storage.getOnboardingSteps();
-    if (existingSteps.length === 0) {
-      console.log("Seeding onboarding steps...");
-      // Note: We would normally insert these, but our current storage interface doesn't have create methods
-      // This would need to be implemented in the storage layer
-    }
+    await db.insert(onboardingSteps).values(onboardingData);
+    console.log("✅ Onboarding steps seeded");
+
+    // Seed sample events
+    const eventsData = [
+      {
+        title: "Solana Development Workshop",
+        description: "Learn to build your first dApp on Solana with hands-on coding session. We'll cover Anchor framework, program development, and frontend integration.",
+        shortDescription: "Build your first Solana dApp with expert guidance",
+        location: "Trinity College Dublin, Hamilton Building",
+        date: new Date("2024-12-15T14:00:00Z"),
+        startTime: new Date("2024-12-15T14:00:00Z"),
+        endTime: new Date("2024-12-15T17:00:00Z"),
+        maxAttendees: 50,
+        isFeatured: true,
+        eventType: "workshop",
+        imageUrl: "/api/placeholder/400/200",
+      },
+      {
+        title: "Web3 Career Night",
+        description: "Network with Web3 professionals and learn about career opportunities in the Solana ecosystem. Featuring guest speakers from top blockchain companies.",
+        shortDescription: "Network with Web3 professionals and explore career paths",
+        location: "Dublin City Centre, WeWork",
+        date: new Date("2024-12-20T18:00:00Z"),
+        startTime: new Date("2024-12-20T18:00:00Z"),
+        endTime: new Date("2024-12-20T21:00:00Z"),
+        maxAttendees: 100,
+        isFeatured: false,
+        eventType: "meetup",
+      },
+      {
+        title: "DeFi Hackathon Weekend",
+        description: "48-hour hackathon focused on building DeFi applications on Solana. Mentorship from industry experts, prizes worth €10,000.",
+        shortDescription: "48-hour DeFi hackathon with €10,000 in prizes",
+        location: "UCD Innovation Academy",
+        date: new Date("2024-12-28T09:00:00Z"),
+        startTime: new Date("2024-12-28T09:00:00Z"),
+        endTime: new Date("2024-12-29T18:00:00Z"),
+        maxAttendees: 150,
+        isFeatured: true,
+        eventType: "hackathon",
+      },
+      {
+        title: "Weekly Office Hours",
+        description: "Drop-in session for getting help with your Solana projects, career advice, and general Web3 questions.",
+        shortDescription: "Get help with your projects and ask questions",
+        location: "Online (Discord)",
+        date: new Date("2024-12-13T16:00:00Z"),
+        startTime: new Date("2024-12-13T16:00:00Z"),
+        endTime: new Date("2024-12-13T17:00:00Z"),
+        eventType: "office_hours",
+      },
+    ];
+
+    await db.insert(events).values(eventsData);
+    console.log("✅ Events seeded");
 
     // Seed achievements
-    const achievements = [
+    const achievementsData = [
       {
-        name: "first_step",
-        title: "First Step",
-        description: "Welcome to Superteam Ireland! You've created your profile.",
-        icon: "fas fa-star",
+        name: "early_bird",
+        title: "Early Bird",
+        description: "Joined the community in the first week",
+        icon: "fas fa-clock",
+        points: 100,
+        category: "onboarding",
+      },
+      {
+        name: "profile_complete",
+        title: "Profile Master",
+        description: "Completed your profile with all details",
+        icon: "fas fa-user-check",
         points: 50,
-        category: "onboarding"
+        category: "onboarding",
       },
       {
         name: "community_member",
         title: "Community Member",
-        description: "Joined our Telegram community and followed us on Twitter.",
+        description: "Joined both Telegram and followed Twitter",
         icon: "fas fa-users",
-        points: 50,
-        category: "community"
-      },
-      {
-        name: "networker",
-        title: "Networker",
-        description: "Attended your first Superteam Ireland event.",
-        icon: "fas fa-handshake",
         points: 100,
-        category: "events"
+        category: "community",
       },
       {
-        name: "builder",
-        title: "Builder",
-        description: "Completed your first project on Solana.",
-        icon: "fas fa-code",
+        name: "event_attendee",
+        title: "Event Attendee",
+        description: "Attended your first Superteam event",
+        icon: "fas fa-calendar-check",
         points: 200,
-        category: "projects"
-      }
+        category: "events",
+      },
+      {
+        name: "hackathon_participant",
+        title: "Hackathon Hero",
+        description: "Participated in a Superteam hackathon",
+        icon: "fas fa-code",
+        points: 500,
+        category: "events",
+      },
     ];
+
+    await db.insert(achievements).values(achievementsData);
+    console.log("✅ Achievements seeded");
 
     // Seed learning resources
-    const learningResources = [
+    const resourcesData = [
       {
-        title: "Introduction to Blockchain",
-        description: "Learn the fundamental concepts of blockchain technology and how it works.",
-        url: "https://docs.solana.com/introduction",
+        title: "Solana Cookbook",
+        description: "Comprehensive guide to building on Solana with examples and best practices",
+        url: "https://solanacookbook.com/",
         type: "documentation",
         difficulty: "beginner",
-        tags: ["blockchain", "fundamentals"]
+        tags: ["solana", "basics", "development"],
       },
       {
-        title: "Solana Development Basics",
-        description: "Get started with Solana development using Rust and the Anchor framework.",
+        title: "Anchor Framework Tutorial",
+        description: "Learn Anchor, the most popular framework for Solana development",
         url: "https://book.anchor-lang.com/",
         type: "tutorial",
-        difficulty: "beginner",
-        tags: ["solana", "rust", "anchor"]
-      },
-      {
-        title: "Building Your First dApp",
-        description: "Step-by-step guide to creating a decentralized application on Solana.",
-        url: "https://solana.com/developers/guides",
-        type: "tutorial",
         difficulty: "intermediate",
-        tags: ["dapp", "development", "solana"]
+        tags: ["anchor", "framework", "smart-contracts"],
       },
       {
-        title: "Advanced Solana Programming",
-        description: "Deep dive into advanced Solana programming concepts and best practices.",
-        url: "https://solanacookbook.com/",
-        type: "documentation", 
+        title: "Web3.js Guide",
+        description: "Complete guide to interacting with Solana programs using Web3.js",
+        url: "https://solana-labs.github.io/solana-web3.js/",
+        type: "documentation",
+        difficulty: "intermediate",
+        tags: ["web3js", "frontend", "integration"],
+      },
+      {
+        title: "Rust Programming Language",
+        description: "Learn Rust, the primary language for Solana program development",
+        url: "https://doc.rust-lang.org/book/",
+        type: "tutorial",
+        difficulty: "beginner",
+        tags: ["rust", "programming", "fundamentals"],
+      },
+      {
+        title: "DeFi Development on Solana",
+        description: "Advanced guide to building decentralized finance applications",
+        url: "https://github.com/solana-labs/solana-program-library",
+        type: "tutorial",
         difficulty: "advanced",
-        tags: ["advanced", "programming", "solana"]
-      }
-    ];
-
-    // Seed sample events
-    const sampleEvents = [
-      {
-        title: "Solana Hackathon Kickoff",
-        description: "Join us for an exciting hackathon kickoff event where you'll learn about Solana development, form teams, and compete for amazing prizes. Perfect for beginners and experienced developers alike.",
-        shortDescription: "Kick off our biggest hackathon of the year with workshops and team formation.",
-        location: "Trinity College Dublin",
-        date: new Date("2024-12-15T14:00:00Z"),
-        startTime: new Date("2024-12-15T14:00:00Z"),
-        endTime: new Date("2024-12-15T20:00:00Z"),
-        imageUrl: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
-        maxAttendees: 100,
-        isFeatured: true,
-        eventType: "hackathon"
+        tags: ["defi", "advanced", "spl-tokens"],
       },
       {
-        title: "Weekly Office Hours", 
-        description: "Get help with your Solana projects, ask questions, and connect with mentors. Open to all skill levels.",
-        shortDescription: "Get help with your Solana projects and connect with mentors.",
-        location: "Online",
-        date: new Date("2024-12-20T16:00:00Z"),
-        startTime: new Date("2024-12-20T16:00:00Z"),
-        endTime: new Date("2024-12-20T17:00:00Z"),
-        maxAttendees: 50,
-        isFeatured: false,
-        eventType: "office_hours"
+        title: "NFT Metadata Standard",
+        description: "Understanding and implementing Metaplex NFT standards",
+        url: "https://docs.metaplex.com/",
+        type: "documentation",
+        difficulty: "intermediate",
+        tags: ["nft", "metaplex", "metadata"],
       },
-      {
-        title: "Solana 101 Workshop",
-        description: "Learn the basics of Solana blockchain technology and build your first decentralized application.",
-        shortDescription: "Learn Solana basics and build your first dApp.",
-        location: "University College Dublin", 
-        date: new Date("2024-12-20T18:00:00Z"),
-        startTime: new Date("2024-12-20T18:00:00Z"),
-        endTime: new Date("2024-12-20T20:00:00Z"),
-        maxAttendees: 75,
-        isFeatured: false,
-        eventType: "workshop"
-      }
     ];
 
-    console.log("Database seeding completed!");
-    
+    await db.insert(learningResources).values(resourcesData);
+    console.log("✅ Learning resources seeded");
+
+    console.log("🎉 Database seeding completed successfully!");
   } catch (error) {
-    console.error("Error seeding database:", error);
+    console.error("❌ Error seeding database:", error);
+    throw error;
   }
 }
 
-// Auto-run seeding in development
-if (process.env.NODE_ENV === "development") {
-  seedDatabase();
+// Run if this is the main module
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const isMainModule = process.argv[1] === __filename;
+
+if (isMainModule) {
+  seed()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error(error);
+      process.exit(1);
+    });
 }
+
+export { seed };

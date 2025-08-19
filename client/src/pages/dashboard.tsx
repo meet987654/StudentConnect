@@ -10,22 +10,23 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
+import { Event, UserAchievement } from "@shared/schema";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const { data: featuredEvents, isLoading: eventsLoading } = useQuery({
+  const { data: featuredEvents = [], isLoading: eventsLoading } = useQuery<Event[]>({
     queryKey: ["/api/events/featured"],
     retry: false,
   });
 
-  const { data: stats } = useQuery({
+  const { data: stats = {} } = useQuery({
     queryKey: ["/api/stats"],
     retry: false,
   });
 
-  const { data: userAchievements } = useQuery({
+  const { data: userAchievements = [] } = useQuery<UserAchievement[]>({
     queryKey: ["/api/users/achievements"],
     retry: false,
   });
@@ -63,7 +64,8 @@ export default function Dashboard() {
     },
   });
 
-  if (!user) return null;
+  // Show dashboard for both logged in and logged out users
+  const isLoggedIn = !!user;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -75,23 +77,27 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-slate-900">
-                Welcome back, {user.firstName || user.email}! 
+                {isLoggedIn ? `Welcome back, ${user?.firstName || user?.email}!` : "Welcome to Superteam Ireland!"}
               </h1>
               <p className="text-lg text-slate-600 mt-2">
-                Continue your journey in the Solana ecosystem
+                {isLoggedIn ? "Continue your journey in the Solana ecosystem" : "Join Ireland's leading Web3 community"}
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-solana-purple">{user.points || 0}</p>
-              <p className="text-sm text-slate-500">Points</p>
-            </div>
+            {isLoggedIn && (
+              <div className="text-right">
+                <p className="text-2xl font-bold text-solana-purple">{user?.points || 0}</p>
+                <p className="text-sm text-slate-500">Points</p>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Progress Tracker */}
-        <div className="mb-8">
-          <ProgressTracker />
-        </div>
+        {/* Progress Tracker - Only show for logged in users */}
+        {isLoggedIn && (
+          <div className="mb-8">
+            <ProgressTracker />
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -100,7 +106,11 @@ export default function Dashboard() {
             <section>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-slate-900">Featured Events</h2>
-                <Button variant="outline" className="text-solana-purple border-solana-purple hover:bg-solana-purple hover:text-white">
+                <Button 
+                  variant="outline" 
+                  className="text-solana-purple border-solana-purple hover:bg-solana-purple hover:text-white"
+                  onClick={() => window.location.href = '/events'}
+                >
                   View All Events
                 </Button>
               </div>
@@ -140,7 +150,7 @@ export default function Dashboard() {
                 <Button 
                   onClick={() => {
                     window.open('https://t.me/superteamireland', '_blank');
-                    joinCommunityMutation.mutate('telegram');
+                    if (isLoggedIn) joinCommunityMutation.mutate('telegram');
                   }}
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white"
                   disabled={joinCommunityMutation.isPending}
@@ -153,14 +163,16 @@ export default function Dashboard() {
                 <Button 
                   onClick={() => {
                     window.open('https://twitter.com/SuperteamIE', '_blank');
-                    joinCommunityMutation.mutate('twitter');
+                    if (isLoggedIn) joinCommunityMutation.mutate('twitter');
                   }}
                   variant="outline"
                   className="w-full border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white"
                   disabled={joinCommunityMutation.isPending}
                   data-testid="button-follow-twitter-dashboard"
                 >
-                  <i className="fab fa-twitter mr-2"></i>
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 mr-2 fill-current">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
                   {joinCommunityMutation.isPending ? 'Following...' : 'Follow @SuperteamIE'}
                 </Button>
               </CardContent>
@@ -174,15 +186,15 @@ export default function Dashboard() {
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Total Members</span>
-                  <span className="font-semibold">{stats?.totalUsers || 0}</span>
+                  <span className="font-semibold">{(stats as any)?.totalUsers || 0}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Events Hosted</span>
-                  <span className="font-semibold">{stats?.totalEvents || 0}</span>
+                  <span className="font-semibold">{(stats as any)?.totalEvents || 0}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Active Users</span>
-                  <span className="font-semibold">{stats?.activeUsers || 0}</span>
+                  <span className="font-semibold">{(stats as any)?.activeUsers || 0}</span>
                 </div>
               </CardContent>
             </Card>

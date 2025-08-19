@@ -9,6 +9,7 @@ import {
   integer,
   boolean,
   serial,
+  unique,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
@@ -94,7 +95,9 @@ export const userOnboardingProgress = pgTable("user_onboarding_progress", {
   isCompleted: boolean("is_completed").default(false),
   completedAt: timestamp("completed_at"),
   createdAt: timestamp("created_at").defaultNow(),
-});
+}, (table) => ({
+  uniqueUserStep: unique("unique_user_step").on(table.userId, table.stepId),
+}));
 
 // Achievements/Badges
 export const achievements = pgTable("achievements", {

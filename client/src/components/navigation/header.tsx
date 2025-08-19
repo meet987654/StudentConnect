@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User } from "@shared/schema";
 
 export default function Header() {
   const { user } = useAuth();
@@ -61,7 +62,9 @@ export default function Header() {
               className="text-slate-400 hover:text-superteam-blue transition-colors"
               data-testid="link-twitter-header"
             >
-              <i className="fab fa-twitter text-lg"></i>
+              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
             </a>
             <a 
               href="https://t.me/superteamireland" 
@@ -73,19 +76,30 @@ export default function Header() {
               <i className="fab fa-telegram text-lg"></i>
             </a>
             
+            {/* Login Button for logged out users */}
+            {!user && (
+              <Button 
+                onClick={() => window.location.href = '/api/login'}
+                className="bg-solana-purple hover:bg-solana-purple/90"
+                data-testid="button-login"
+              >
+                Sign In
+              </Button>
+            )}
+
             {/* User Profile */}
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2 p-2" data-testid="button-user-menu">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.profileImageUrl} alt="Profile" />
+                      <AvatarImage src={user?.profileImageUrl || ''} alt="Profile" />
                       <AvatarFallback>
-                        {user.firstName ? user.firstName[0] : user.email?.[0]?.toUpperCase() || 'U'}
+                        {user?.firstName ? user.firstName[0] : user?.email?.[0]?.toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
                     <span className="text-sm font-medium text-slate-700 hidden sm:block">
-                      {user.firstName || user.email?.split('@')[0] || 'User'}
+                      {user?.firstName || user?.email?.split('@')[0] || 'User'}
                     </span>
                   </Button>
                 </DropdownMenuTrigger>

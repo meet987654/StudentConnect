@@ -1,26 +1,73 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/navigation/header";
 import EventCard from "@/components/events/event-card";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { isUnauthorizedError } from "@/lib/authUtils";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { Event } from "@shared/schema";
+import { EventCreateForm } from "@/components/events/event-create-form";
 
 export default function Events() {
   const [activeTab, setActiveTab] = useState("all");
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
 
-  const { data: events, isLoading } = useQuery({
+  const { data: events = [], isLoading } = useQuery<Event[]>({
     queryKey: ["/api/events"],
     retry: false,
   });
 
-  const { data: featuredEvents } = useQuery({
+  const { data: featuredEvents = [] } = useQuery<Event[]>({
     queryKey: ["/api/events/featured"],
     retry: false,
   });
 
-  const filteredEvents = events?.filter((event: any) => {
+  const createEventMutation = useMutation({
+    mutationFn: async (eventData: any) => {
+      return apiRequest("POST", "/api/events", eventData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/events"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events/featured"] });
+      setShowCreateDialog(false);
+      toast({
+        title: "Event Created",
+        description: "Your event has been successfully created!",
+      });
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Error",
+        description: "Failed to create event. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const filteredEvents = events.filter((event: Event) => {
     if (activeTab === "all") return true;
     if (activeTab === "featured") return event.isFeatured;
     return event.eventType === activeTab;
@@ -33,16 +80,36 @@ export default function Events() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-4">
-            Events & Workshops
-          </h1>
-          <p className="text-lg text-slate-600">
-            Join our community events and accelerate your Web3 learning
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 mb-4">
+                Events & Workshops
+              </h1>
+              <p className="text-lg text-slate-600">
+                Join our community events and accelerate your Web3 learning
+              </p>
+            </div>
+            {user && (
+              <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+                <DialogTrigger asChild>
+                  <Button className="bg-solana-purple hover:bg-solana-purple/90">
+                    <i className="fas fa-plus mr-2"></i>
+                    Create Event
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[600px]">
+                  <DialogHeader>
+                    <DialogTitle>Create New Event</DialogTitle>
+                  </DialogHeader>
+                  <EventCreateForm onSubmit={(data) => createEventMutation.mutate(data)} />
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
         </div>
 
         {/* Featured Events Banner */}
-        {featuredEvents && featuredEvents.length > 0 && (
+        {featuredEvents.length > 0 && (
           <div className="mb-8">
             <div className="bg-gradient-to-r from-solana-purple to-superteam-blue rounded-2xl p-8 text-white">
               <div className="flex items-center justify-between">
@@ -52,19 +119,19 @@ export default function Events() {
                     Featured Event
                   </Badge>
                   <h2 className="text-2xl font-bold mb-2">
-                    {featuredEvents[0].title}
+                    {featuredEvents[0]?.title}
                   </h2>
                   <p className="text-blue-100 mb-4">
-                    {featuredEvents[0].shortDescription}
+                    {featuredEvents[0]?.shortDescription}
                   </p>
                   <div className="flex items-center space-x-6 text-sm">
                     <div className="flex items-center">
                       <i className="fas fa-calendar mr-2"></i>
-                      {new Date(featuredEvents[0].date).toLocaleDateString()}
+                      {featuredEvents[0]?.date ? new Date(featuredEvents[0].date).toLocaleDateString() : 'TBA'}
                     </div>
                     <div className="flex items-center">
                       <i className="fas fa-map-marker-alt mr-2"></i>
-                      {featuredEvents[0].location}
+                      {featuredEvents[0]?.location}
                     </div>
                   </div>
                 </div>

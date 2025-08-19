@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { 
+  insertEventSchema,
   insertEventRsvpSchema, 
   insertUserActivitySchema,
   insertUserOnboardingProgressSchema 
@@ -116,6 +117,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating RSVP:", error);
       res.status(500).json({ message: "Failed to create RSVP" });
+    }
+  });
+
+  app.post('/api/events', isAuthenticated, async (req: any, res) => {
+    try {
+      const eventData = insertEventSchema.parse(req.body);
+      const event = await storage.createEvent(eventData);
+      res.json(event);
+    } catch (error) {
+      console.error("Error creating event:", error);
+      res.status(500).json({ message: "Failed to create event" });
     }
   });
 
