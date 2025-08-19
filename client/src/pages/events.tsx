@@ -34,6 +34,37 @@ export default function Events() {
     retry: false,
   });
 
+  // Show sign-in prompt for logged out users
+  if (!user && !isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <Header />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center py-16">
+            <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <i className="fas fa-user-lock text-slate-400 text-2xl"></i>
+            </div>
+            <h1 className="text-3xl font-bold text-slate-900 mb-4">
+              Sign In Required
+            </h1>
+            <p className="text-lg text-slate-600 mb-8 max-w-md mx-auto">
+              Please sign in to view events and workshops. Join our community to access exclusive learning opportunities.
+            </p>
+            <Button 
+              onClick={() => window.location.href = '/api/login'}
+              className="bg-solana-purple hover:bg-solana-purple/90 text-lg px-8 py-3"
+              data-testid="button-signin-events"
+            >
+              <i className="fas fa-sign-in-alt mr-2"></i>
+              Sign In to Continue
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const createEventMutation = useMutation({
     mutationFn: async (eventData: any) => {
       return apiRequest("POST", "/api/events", eventData);
