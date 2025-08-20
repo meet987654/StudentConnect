@@ -62,7 +62,7 @@ export default function ProgressTracker() {
     );
   }
 
-  if (!steps || steps.length === 0) {
+  if (!steps || !Array.isArray(steps) || steps.length === 0) {
     return (
       <Card>
         <CardContent className="py-8 text-center">
@@ -73,8 +73,8 @@ export default function ProgressTracker() {
     );
   }
 
-  const completedSteps = progress?.filter((p: any) => p.isCompleted) || [];
-  const progressPercentage = Math.round((completedSteps.length / steps.length) * 100);
+  const completedSteps = Array.isArray(progress) ? progress.filter((p: any) => p.isCompleted) : [];
+  const progressPercentage = Array.isArray(steps) ? Math.round((completedSteps.length / steps.length) * 100) : 0;
 
   // Mock onboarding steps if none exist in database
   const defaultSteps = [
@@ -107,7 +107,7 @@ export default function ProgressTracker() {
     }
   ];
 
-  const stepsToShow = steps.length > 0 ? steps : defaultSteps;
+  const stepsToShow = Array.isArray(steps) && steps.length > 0 ? steps : defaultSteps;
   const currentStep = completedSteps.length < stepsToShow.length ? completedSteps.length : stepsToShow.length - 1;
 
   return (

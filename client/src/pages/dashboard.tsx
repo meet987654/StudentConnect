@@ -199,6 +199,35 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
+            {/* Watch Demo Section */}
+            <Card className="bg-gradient-to-br from-solana-purple/5 to-blue-50">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center">
+                  <i className="fas fa-play-circle mr-2 text-solana-purple"></i>
+                  Watch Demo
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-solana-purple rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i className="fas fa-play text-white text-xl"></i>
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Platform Tutorial</h3>
+                  <p className="text-sm text-slate-600 mb-4">
+                    Learn how to make the most of the Superteam Ireland platform
+                  </p>
+                  <Button 
+                    className="w-full bg-solana-purple text-white hover:bg-purple-700"
+                    onClick={() => window.open('https://www.youtube.com/watch?v=demo-video', '_blank')}
+                    data-testid="button-watch-demo"
+                  >
+                    <i className="fas fa-play mr-2"></i>
+                    Watch Demo
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Achievements Preview */}
             <Card>
               <CardHeader>
