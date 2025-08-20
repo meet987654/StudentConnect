@@ -111,15 +111,24 @@ export default function EventCard({ event, showFullDetails = false }: EventCardP
     <Card className="border border-slate-200 hover:shadow-lg transition-shadow">
       <CardContent className="p-0">
         {/* Event Image */}
-        {event.imageUrl && (
-          <div className="aspect-video w-full overflow-hidden rounded-t-lg">
+        <div className="w-full h-48 bg-gradient-to-br from-solana-purple to-solana-green rounded-t-lg overflow-hidden flex items-center justify-center">
+          {event.imageUrl ? (
             <img 
               src={event.imageUrl}
               alt={event.title}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                target.nextElementSibling?.classList.remove('hidden');
+              }}
             />
+          ) : null}
+          <div className={`${event.imageUrl ? 'hidden' : ''} text-white text-center`}>
+            <i className="fas fa-calendar-alt text-4xl mb-2"></i>
+            <p className="text-lg font-semibold">{event.title}</p>
           </div>
-        )}
+        </div>
 
         <div className="p-6">
           {/* Event Header */}

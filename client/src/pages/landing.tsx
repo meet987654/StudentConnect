@@ -19,7 +19,7 @@ export default function Landing() {
                 <p className="text-xs text-slate-500">Student Onboarding</p>
               </div>
             </div>
-            
+
             <nav className="hidden md:flex items-center space-x-8">
               <a href="#events" className="text-slate-600 hover:text-solana-purple transition-colors">Events</a>
               <a href="#community" className="text-slate-600 hover:text-solana-purple transition-colors">Community</a>
@@ -33,7 +33,7 @@ export default function Landing() {
               <a href="#" className="text-slate-400 hover:text-superteam-blue transition-colors">
                 <i className="fab fa-telegram text-lg"></i>
               </a>
-              
+
               <Button 
                 onClick={() => window.location.href = '/api/login'}
                 className="bg-solana-purple hover:bg-purple-700"
@@ -55,19 +55,19 @@ export default function Landing() {
                 <i className="fas fa-fire text-orange-300 mr-2"></i>
                 Join 500+ Irish Students in Web3
               </div>
-              
+
               <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                 Build the Future with 
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
                   Solana
                 </span>
               </h1>
-              
+
               <p className="text-xl text-blue-100 mb-8 leading-relaxed">
                 Connect with Ireland's most ambitious university students building on Solana. 
                 Learn, collaborate, and launch your Web3 career with exclusive opportunities and mentorship.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
                   onClick={() => window.location.href = '/api/login'}
@@ -87,14 +87,14 @@ export default function Landing() {
                 </Button>
               </div>
             </div>
-            
+
             <div className="relative">
               <img 
                 src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
                 alt="University students collaborating" 
                 className="rounded-2xl shadow-2xl w-full"
               />
-              
+
               {/* Floating Stats Cards */}
               <div className="absolute -top-6 -left-6 bg-white rounded-xl p-4 shadow-xl">
                 <div className="flex items-center space-x-3">
@@ -107,7 +107,7 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="absolute -bottom-6 -right-6 bg-white rounded-xl p-4 shadow-xl">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -131,7 +131,7 @@ export default function Landing() {
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Why Join Superteam Ireland?</h2>
             <p className="text-lg text-slate-600">Everything you need to succeed in the Solana ecosystem</p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="border border-slate-200 hover:shadow-lg transition-shadow">
               <CardContent className="p-8">
@@ -180,20 +180,20 @@ export default function Landing() {
               <i className="fas fa-fire text-orange-400 mr-2"></i>
               Ready to Join the Movement?
             </Badge>
-            
+
             <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
               Complete Your Onboarding &
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-solana-purple to-solana-green">
                 Start Building
               </span>
             </h2>
-            
+
             <p className="text-xl text-slate-300 mb-12 leading-relaxed">
               Join our Telegram community, follow @SuperteamIE, and unlock exclusive opportunities 
               in the Solana ecosystem. Your Web3 journey starts here.
             </p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
             <Button 
               onClick={() => window.open('https://t.me/superteamireland', '_blank')}
@@ -203,7 +203,7 @@ export default function Landing() {
               <i className="fab fa-telegram text-2xl mr-3"></i>
               Join Telegram Community
             </Button>
-            
+
             <Button 
               onClick={() => window.open('https://twitter.com/SuperteamIE', '_blank')}
               className="bg-slate-800 hover:bg-slate-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all transform hover:scale-105 shadow-xl border border-slate-600"
@@ -213,7 +213,7 @@ export default function Landing() {
               Follow @SuperteamIE
             </Button>
           </div>
-          
+
           {/* Social Proof */}
           <div className="flex items-center justify-center space-x-8 text-slate-400">
             <div className="text-center">

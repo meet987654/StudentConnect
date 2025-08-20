@@ -172,6 +172,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const { stepId, completed } = req.body;
       
+      console.log(`Updating onboarding progress: userId=${userId}, stepId=${stepId}, completed=${completed}`);
       const progress = await storage.updateOnboardingProgress(userId, stepId, completed);
       
       // Award points for completing step
