@@ -57,6 +57,7 @@ function updateUserSession(
 async function upsertUser(
   claims: any,
 ) {
+  console.log("OAuth claims received:", JSON.stringify(claims, null, 2));
   await storage.upsertUser({
     id: claims["sub"],
     email: claims["email"],
