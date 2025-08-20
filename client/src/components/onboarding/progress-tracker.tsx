@@ -28,9 +28,7 @@ export default function ProgressTracker() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/onboarding/progress"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/onboarding/steps"] });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       toast({
         title: "Progress Updated!",
         description: "You've earned 50 points for completing this step.",
@@ -76,8 +74,7 @@ export default function ProgressTracker() {
   }
 
   const completedSteps = progress?.filter((p: any) => p.isCompleted) || [];
-  const totalSteps = stepsToShow.length;
-  const progressPercentage = totalSteps > 0 ? Math.round((completedSteps.length / totalSteps) * 100) : 0;
+  const progressPercentage = Math.round((completedSteps.length / steps.length) * 100);
 
   // Mock onboarding steps if none exist in database
   const defaultSteps = [
@@ -111,7 +108,7 @@ export default function ProgressTracker() {
   ];
 
   const stepsToShow = steps.length > 0 ? steps : defaultSteps;
-  const currentStep = Math.min(completedSteps.length, stepsToShow.length - 1);
+  const currentStep = completedSteps.length < stepsToShow.length ? completedSteps.length : stepsToShow.length - 1;
 
   return (
     <section className="py-8 bg-white rounded-2xl border border-slate-200">

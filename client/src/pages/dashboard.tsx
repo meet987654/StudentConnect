@@ -39,9 +39,6 @@ export default function Dashboard() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/onboarding/progress"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       toast({
         title: "Progress Updated",
         description: "Community step completed! You've earned 50 points.",
