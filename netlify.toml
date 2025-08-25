@@ -1,0 +1,19 @@
+[build]
+  # Tell Netlify to run build commands from the client directory
+  base = "StudentConnect/client"
+  
+  # Build command to run
+  command = "npm run build"
+  
+  # Directory to publish (relative to base)
+  publish = "dist"
+
+# Handle client-side routing (React Router)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Optional: Set Node.js version
+[build.environment]
+  NODE_VERSION = "18"
