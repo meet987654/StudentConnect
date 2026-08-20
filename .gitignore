@@ -2,8 +2,7 @@
 node_modules
 client/node_modules
 
-# Build outputs
-dist
+# Build outputs (dist/public is committed so Vercel can serve the client)
 client/build
 client/dist
 
