@@ -1,9 +1,11 @@
-import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Link, useLocation } from "wouter";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
 
 export default function Landing() {
+  const [, setLocation] = useLocation();
+
   return (
     <div className="min-h-screen bg-slate-50 font-inter">
       {/* Header */}
@@ -35,7 +37,7 @@ export default function Landing() {
               </a>
               
               <Button 
-                onClick={() => window.location.href = '/api/login'}
+                onClick={() => setLocation('/auth')}
                 className="bg-solana-purple hover:bg-purple-700"
                 data-testid="button-login"
               >
@@ -47,7 +49,7 @@ export default function Landing() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-solana-purple via-superteam-blue to-solana-green py-20">
+      <section id="community" className="bg-gradient-to-br from-solana-purple via-superteam-blue to-solana-green py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-white">
@@ -70,7 +72,7 @@ export default function Landing() {
               
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
-                  onClick={() => window.location.href = '/api/login'}
+                  onClick={() => setLocation('/auth')}
                   className="bg-white text-solana-purple px-8 py-4 rounded-xl font-semibold text-lg hover:bg-slate-50 transition-all transform hover:scale-105 shadow-xl"
                   data-testid="button-start-journey"
                 >
@@ -125,7 +127,7 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-white">
+      <section id="events" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Why Join Superteam Ireland?</h2>
@@ -173,7 +175,7 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <section id="resources" className="py-20 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="mb-8">
             <Badge className="inline-flex items-center px-4 py-2 bg-white/10 text-white mb-6">

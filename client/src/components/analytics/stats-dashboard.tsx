@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import StatsCard from "@/components/ui/stats-card";
 
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import StatsCard from "../ui/stats-card";
 export default function StatsDashboard() {
   const { data: stats, isLoading } = useQuery({
     queryKey: ["/api/stats"],

@@ -1,16 +1,16 @@
 import { useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import Header from "@/components/navigation/header";
-import ProgressTracker from "@/components/onboarding/progress-tracker";
-import EventCard from "@/components/events/event-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { isUnauthorizedError } from "@/lib/authUtils";
-import { apiRequest } from "@/lib/queryClient";
-import { Event, UserAchievement } from "@shared/schema";
+import { useAuth } from "../hooks/useAuth";
+import { useToast } from "../hooks/use-toast";
+import Header from "../components/navigation/header";
+import ProgressTracker from "../components/onboarding/progress-tracker";
+import EventCard from "../components/events/event-card";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { isUnauthorizedError } from "../lib/authUtils";
+import { apiRequest } from "../lib/queryClient";
+import { Event, UserAchievement } from "../shared/schema";
 
 export default function Dashboard() {
   const { user } = useAuth();

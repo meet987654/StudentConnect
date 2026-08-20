@@ -1,13 +1,13 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { isUnauthorizedError } from "@/lib/authUtils";
-import { apiRequest, queryClient } from "@/lib/queryClient";
 
+import { useAuth } from "../../hooks/useAuth";
+import { useToast } from "../../hooks/use-toast";
+import { Card, CardContent } from "../ui/card";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { Progress } from "../ui/progress";
+import { isUnauthorizedError } from "../../lib/authUtils";
+import { apiRequest, queryClient } from "../../lib/queryClient";
 export default function ProgressTracker() {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -34,7 +34,7 @@ export default function ProgressTracker() {
         description: "You've earned 50 points for completing this step.",
       });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       if (isUnauthorizedError(error)) {
         toast({
           title: "Unauthorized",
@@ -48,7 +48,7 @@ export default function ProgressTracker() {
       }
       toast({
         title: "Error",
-        description: "Failed to update progress. Please try again.",
+        description: error.message || "Failed to update progress. Please try again.",
         variant: "destructive",
       });
     },
@@ -168,8 +168,9 @@ export default function ProgressTracker() {
                     isCompleted ? "bg-green-100" : isCurrent ? "bg-purple-100" : "bg-slate-100"
                   }`}>
                     <i className={`text-xl ${
-                      step.name === "create_profile" ? "fas fa-user-plus" :
-                      step.name === "join_community" ? "fab fa-telegram" :
+                      (step.name === "create_profile" || step.name === "profile_setup") ? "fas fa-user-plus" :
+                      (step.name === "join_community" || step.name === "join_telegram") ? "fab fa-telegram" :
+                      step.name === "follow_twitter" ? "fab fa-twitter" :
                       step.name === "first_event" ? "fas fa-calendar" :
                       "fas fa-check"
                     } ${
@@ -200,21 +201,20 @@ export default function ProgressTracker() {
                       <Button
                         className="w-full bg-solana-purple text-white hover:bg-purple-700"
                         onClick={() => {
-                          if (step.name === "join_community") {
-                            // Open social media links and mark as complete
+                          if (step.name === "join_community" || step.name === "join_telegram") {
                             window.open("https://t.me/superteamireland", "_blank");
+                          } else if (step.name === "follow_twitter") {
                             window.open("https://twitter.com/SuperteamIE", "_blank");
-                            completeMutation.mutate({ stepId: step.id, completed: true });
-                          } else if (step.name === "create_profile") {
-                            // Mark profile creation as complete (assuming they're logged in)
-                            completeMutation.mutate({ stepId: step.id, completed: true });
                           }
+                          completeMutation.mutate({ stepId: step.id, completed: true });
                         }}
                         disabled={completeMutation.isPending}
                         data-testid={`button-complete-step-${step.name}`}
                       >
                         {completeMutation.isPending ? "Completing..." : 
-                         step.name === "join_community" ? "Join Now" : "Complete"}
+                         (step.name === "join_community" || step.name === "join_telegram") ? "Join Now" :
+                         step.name === "follow_twitter" ? "Follow Now" : 
+                         "Complete"}
                       </Button>
                     ) : (
                       <Badge variant="secondary" className="text-slate-400">

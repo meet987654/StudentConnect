@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { db } from "./db";
 import { events, onboardingSteps, achievements, learningResources } from "@shared/schema";
 

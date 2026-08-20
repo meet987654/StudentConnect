@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./auth";
 import { 
   insertEventSchema,
   insertEventRsvpSchema, 
@@ -17,11 +17,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      console.log("Looking for user with ID:", userId);
-      console.log("User claims:", JSON.stringify(req.user.claims, null, 2));
+      const userId = (req.user as any).id;
       const user = await storage.getUser(userId);
-      console.log("User found:", user ? "Yes" : "No");
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -35,7 +32,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Update user profile
   app.patch('/api/users/profile', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.user as any).id;
       const user = await storage.updateUserProfile(userId, req.body);
       res.json(user);
     } catch (error) {
@@ -95,7 +92,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/events/:id/rsvp', isAuthenticated, async (req: any, res) => {
     try {
       const eventId = parseInt(req.params.id);
-      const userId = req.user.claims.sub;
+      const userId = (req.user as any).id;
       
       const rsvpData = insertEventRsvpSchema.parse({
         userId,
@@ -158,7 +155,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/onboarding/progress', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.user as any).id;
       const progress = await storage.getUserOnboardingProgress(userId);
       res.json(progress);
     } catch (error) {
@@ -169,7 +166,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/onboarding/complete', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.user as any).id;
       const { stepId, completed } = req.body;
       
       const progress = await storage.updateOnboardingProgress(userId, stepId, completed);
@@ -193,9 +190,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Learning resources
-  app.get('/api/resources', async (req, res) => {
+  app.get('/api/resources/:difficulty', async (req, res) => {
     try {
-      const difficulty = req.query.difficulty as string;
+      const difficulty = req.params.difficulty;
       const resources = await storage.getLearningResources(difficulty);
       res.json(resources);
     } catch (error) {
@@ -217,7 +214,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/users/achievements', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.user as any).id;
       const achievements = await storage.getUserAchievements(userId);
       res.json(achievements);
     } catch (error) {
@@ -239,7 +236,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/users/activities', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req.user as any).id;
       const activities = await storage.getUserActivities(userId);
       res.json(activities);
     } catch (error) {

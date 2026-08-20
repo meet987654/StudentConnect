@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import Header from "@/components/navigation/header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
+import Header from "../components/navigation/header";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Progress } from "../components/ui/progress";
+import { useToast } from "../hooks/use-toast";
 
 export default function Resources() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("beginner");
+  const { toast } = useToast();
 
   const { data: resources, isLoading } = useQuery({
     queryKey: ["/api/resources", selectedDifficulty],
@@ -281,7 +283,17 @@ export default function Resources() {
                   </div>
                 </div>
                 
-                <Button variant="outline" className="w-full text-sm" data-testid="button-join-study-group">
+                <Button 
+                  variant="outline" 
+                  className="w-full text-sm" 
+                  data-testid="button-join-study-group"
+                  onClick={() => {
+                    toast({
+                      title: "Joined Study Group!",
+                      description: "You'll receive a calendar invite shortly.",
+                    });
+                  }}
+                >
                   Join Study Group
                 </Button>
               </CardContent>

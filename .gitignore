@@ -1,6 +1,51 @@
+# Dependencies
 node_modules
+client/node_modules
+
+# Build outputs
 dist
+client/build
+client/dist
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Replit specific
+.replit
+.config
+.local
+replit.md
+
+# Server public (generated)
 server/public
+
+# Vite
 vite.config.ts.*
+
+# Archives
 *.tar.gz
+
+# Misc
+attached_assets
+netlify.toml
