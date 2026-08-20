@@ -70,7 +70,9 @@ async function buildApp(): Promise<Express> {
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   if (process.env.NODE_ENV === "development") {
-    const { setupVite } = await import("./vite");
+    // We use a variable to prevent esbuild from statically analyzing and bundling vite
+    const viteModule = "./vite";
+    const { setupVite } = await import(viteModule);
     await setupVite(app, createServer(app));
   } else {
     const { serveStatic } = await import("./static");
