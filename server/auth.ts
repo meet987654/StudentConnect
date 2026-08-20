@@ -7,15 +7,17 @@ import MemoryStore from "memorystore";
 import { scryptSync, randomBytes, timingSafeEqual } from "crypto";
 import { storage } from "./storage";
 
-const MemoryStoreSession = MemoryStore(session);
+import { pool } from "./db";
+
+const PostgresStore = connectPg(session);
 
 export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
   
-  // Temporarily use memory store only
-  console.log("Using memory store for sessions");
-  const sessionStore = new MemoryStoreSession({
-    checkPeriod: 86400000 // prune expired entries every 24h
+  const sessionStore = new PostgresStore({
+    pool: pool,
+    tableName: 'sessions',
+    createTableIfMissing: false,
   });
 
   return session({
@@ -25,7 +27,7 @@ export function getSession() {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false, // Disable for development
+      secure: process.env.NODE_ENV === "production", // Secure in production
       maxAge: sessionTtl,
     },
   });
