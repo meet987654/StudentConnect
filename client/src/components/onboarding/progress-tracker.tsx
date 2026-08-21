@@ -108,7 +108,12 @@ export default function ProgressTracker() {
   ];
 
   const stepsToShow = Array.isArray(steps) && steps.length > 0 ? steps : defaultSteps;
-  const currentStep = completedSteps.length < stepsToShow.length ? completedSteps.length : stepsToShow.length - 1;
+  
+  const firstIncompleteIndex = stepsToShow.findIndex(
+    (step: any) => !completedSteps.some((p: any) => p.stepId === step.id)
+  );
+  
+  const currentStep = firstIncompleteIndex === -1 ? stepsToShow.length - 1 : firstIncompleteIndex;
 
   return (
     <section className="py-8 bg-white rounded-2xl border border-slate-200">
